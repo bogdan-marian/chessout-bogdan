@@ -4,7 +4,7 @@
 
 First project:
  - name: xChessout
- - sub-broject: chessout-x
- - readme: chessout-x/README.md 
+ - folder: [chessout-x](chessout-x/)
+ - [xChessout README](chessout-x/README.md) 
  
 
