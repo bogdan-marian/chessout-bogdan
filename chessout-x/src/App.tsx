@@ -1,20 +1,57 @@
-import * as React from 'react';
+import React from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { useWalletConnect } from '@walletconnect/react-native';
 
-import {NavigationContainer} from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import Home from './Home';
-import DetailsScreen from './Details';
-
-const MyStack = createNativeStackNavigator();
+const chainId = "D"; // Replace with your desired chain ID (for now it does not run so this is fine)
+const appId = 'your-app-id'; // Replace with your xPortal app ID (same here)
 
 export default function App() {
+  const { connect, connected, accounts, killSession } = useWalletConnect();
+
+  const handleConnect = async () => {
+    try {
+      const session = await connect({
+        chainId: chainId.toString(),
+        appId,
+      });
+      console.log('Connected!', session);
+    } catch (error) {
+      console.error('Connection error:', error);
+    }
+  };
+
+  const handleDisconnect = () => {
+    if (connected) {
+      killSession();
+      console.log('Disconnected!');
+    }
+  };
+
   return (
-    <NavigationContainer>
-      <MyStack.Navigator>
-        <MyStack.Screen name="Home" component={Home} />
-        <MyStack.Screen name="Details" component={DetailsScreen} />
-      </MyStack.Navigator>
-    </NavigationContainer>
+    <View style={styles.container}>
+      <Text style={styles.header}>xPortal Wallet App</Text>
+      {!connected ? (
+        <Button title="Connect with xPortal" onPress={handleConnect} />
+      ) : (
+        <>
+          <Text>Connected Accounts:</Text>
+          <Text>{accounts.join(', ')}</Text>
+          <Button title="Disconnect" onPress={handleDisconnect} />
+        </>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+});
